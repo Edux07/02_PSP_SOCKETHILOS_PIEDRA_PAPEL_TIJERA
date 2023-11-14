@@ -37,8 +37,9 @@ public class SocketCliente extends Thread {
 			o2.writeObject("Esperando a que se conecte el Cliente 2");
 			
 			while(true) {
-				String juego1;
-				String juego2;
+				String opcion1 = (String) i1.readObject();
+                String opcion2 = (String) i2.readObject();
+              
 			}
 			
 			
@@ -47,5 +48,7 @@ public class SocketCliente extends Thread {
 }
 	
 	}
+
+	
 
 }
