@@ -23,9 +23,11 @@ public class SocketServidor {
 			System.out.println("SERVIDOR: Esperando peticion por el puerto " + PUERTO);
 			while (true) {
 				Socket socketAlCliente = servidor.accept();
+				Socket socketAlCliente1 = servidor.accept();
 				System.out.println("SERVIDOR: peticion numero " + ++peticion + " recibida");
-				new SocketCliente(socketAlCliente, socketAlCliente);
+				new SocketCliente(socketAlCliente, socketAlCliente1);
 			}
+			
 
 		} catch (IOException e) {
 			System.err.println("SERVIDOR: Error de entrada/salida");
