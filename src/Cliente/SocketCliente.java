@@ -1,54 +1,54 @@
 package Cliente;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Scanner;
 
-public class SocketCliente extends Thread {
+public class SocketCliente {
 
-	public static final int PUERTO = 2077;
-	public static final String IP_SERVER = "Localhost";
+	public static final int PUERTO = 2081;
+	public static final String IP_SERVER = "localhost";
 
-	public Socket Cliente1, Cliente2;
-	public ObjectOutputStream o1, o2;
-	public ObjectInputStream i1, i2;
-	public PrintStream p1;
+	public static void main(String[] args) throws SocketException {
+		System.out.println("-------- Juego de Piedra-Papel-Tijera. Jugador1 --------");
 
-	public SocketCliente(Socket cliente1, Socket cliente2) throws IOException {
-		Cliente1 = cliente1;
-		Cliente2 = cliente2;
+		InetSocketAddress direccionServer = new InetSocketAddress(IP_SERVER, PUERTO);
 
-		this.o1 = new ObjectOutputStream(Cliente1.getOutputStream());
-		this.o2 = new ObjectOutputStream(Cliente2.getOutputStream());
+		try (Socket socketServer = new Socket(); Scanner sc = new Scanner(System.in)) {
+			socketServer.connect(direccionServer);
 
-		this.i1 = new ObjectInputStream(Cliente1.getInputStream());
-		this.i2 = new ObjectInputStream(Cliente2.getInputStream());
+			PrintStream salida = new PrintStream(socketServer.getOutputStream());
+			InputStreamReader entrada = new InputStreamReader(socketServer.getInputStream());
+			BufferedReader bf = new BufferedReader(entrada);
 
-		p1 = new PrintStream(o1);
-		
-	}
+			for (int i = 0; i < 3; i++) {
+				System.out.print("Ingresa tu elección (piedra, papel, tijera): ");
+				String eleccion = sc.nextLine();
 
-	@Override
-	public void run() {
-		try{	
-			o1.writeObject("Esperando a que se conecte el Cliente 1");
-			o2.writeObject("Esperando a que se conecte el Cliente 2");
-			
-			while(true) {
-				String opcion1 = (String) i1.readObject();
-                String opcion2 = (String) i2.readObject();
-              
+				salida.println(eleccion);
+
+				System.out.println("Esperando respuesta del servidor...");
+				String respuesta = bf.readLine();
+
+				System.out.println("Resultado de la ronda: " + respuesta);
 			}
-			
-			
-		}catch (Exception e) {
-		e.printStackTrace();
-}
-	
-	}
 
-	
+		} catch (UnknownHostException e) {
+			System.err.println("No se puede conectar al servidor en la dirección " + IP_SERVER);
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("Error de entrada/salida");
+			e.printStackTrace();
+		} catch (Exception e) {
+			System.err.println("Error -> " + e);
+			e.printStackTrace();
+		}
+	}
 
 }
